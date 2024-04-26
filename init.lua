@@ -1,3 +1,12 @@
+-- Code below is to make nvim /path/to/folder to make current folder the current directory
+local group_cdpwd = vim.api.nvim_create_augroup("group_cdpwd", { clear = true })
+vim.api.nvim_create_autocmd("VimEnter", {
+    group = group_cdpwd,
+    pattern = "*",
+    callback = function()
+        vim.api.nvim_set_current_dir(vim.fn.expand "%:p:h")
+    end,
+})
 -- Set <space> as the leader key
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
@@ -12,7 +21,7 @@ vim.opt.number = true
 -- You can also add relative line numbers, to help with jumping.
 --  Experiment for yourself to see if you like it!
 vim.opt.relativenumber = true
-
+vim.opt.smartindent = true
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.opt.mouse = "a"
 
@@ -27,7 +36,6 @@ vim.opt.clipboard = "unnamedplus"
 -- Enable break indent
 vim.opt.breakindent = true
 
-vim.opt.smartindent = true
 -- Save undo history
 vim.opt.undofile = true
 
@@ -69,7 +77,6 @@ vim.opt.scrolloff = 10
 -- Set highlight on search, but clear on pressing <Esc> in normal mode
 vim.opt.hlsearch = true
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
-vim.keymap.set("n", "<leader>t", ":vsplit term://zsh<CR>")
 
 -- Tab/Shift+tab to indent/dedent
 vim.keymap.set("v", "<Tab>", ">gv")
@@ -144,7 +151,6 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup({
     -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
     "tpope/vim-sleuth", -- Detect tabstop and shiftwidth automatically
-    "tpope/vim-fugitive",
     { "nvim-treesitter/nvim-treesitter-context", opts = {} },
     -- NOTE: Plugins can also be added by using a table,
     -- with the first argument being the link and the following

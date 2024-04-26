@@ -2,7 +2,7 @@ return {
     {
         "sindrets/diffview.nvim",
         keys = {
-            { "<leader>g", "<CMD>DiffviewOpen<CR>", mode = { "n", "i", "v" } },
+            { "<leader>g", "<CMD>DiffviewOpen<CR>", mode = { "n" } },
         },
         config = {
             keymaps = {
