@@ -12,7 +12,6 @@ vim.api.nvim_create_autocmd("VimEnter", {
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
-
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = true
 
@@ -24,7 +23,6 @@ vim.opt.relativenumber = true
 vim.opt.smartindent = true
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.opt.mouse = "a"
-
 -- Don't show the mode, since it's already in the status line
 vim.opt.showmode = false
 
@@ -83,7 +81,6 @@ vim.keymap.set("v", "<Tab>", ">gv")
 vim.keymap.set("n", "<Tab>", "v><C-\\><C-N>")
 vim.keymap.set("v", "<S-Tab>", "<gv")
 vim.keymap.set("n", "<S-Tab>", "v<<C-\\><C-N>")
-vim.keymap.set("i", "<S-Tab>", "<C-\\><C-N>v<<C-\\><C-N>^i")
 
 -- Diagnostic keymaps
 vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { desc = "Go to previous [D]iagnostic message" })
@@ -162,7 +159,7 @@ require("lazy").setup({
     --    require('Comment').setup({})
 
     -- "gc" to comment visual regions/lines
-    { "numToStr/Comment.nvim", opts = {} },
+    { "numToStr/Comment.nvim", opts = {}, lazy = false },
 
     -- Here is a more advanced example where we pass configuration
     -- options to `gitsigns.nvim`. This is equivalent to the following Lua:
@@ -285,10 +282,10 @@ require("lazy").setup({
             pcall(require("telescope").load_extension, "live_grep_args")
             -- See `:help telescope.builtin`
             local builtin = require "telescope.builtin"
+
             vim.keymap.set("n", "<leader>sh", builtin.help_tags, { desc = "[S]earch [H]elp" })
             vim.keymap.set("n", "<leader>sk", builtin.keymaps, { desc = "[S]earch [K]eymaps" })
             vim.keymap.set("n", "<leader>sf", builtin.find_files, { desc = "[S]earch [F]iles" })
-            vim.keymap.set("n", "<leader>ss", builtin.builtin, { desc = "[S]earch [S]elect Telescope" })
             vim.keymap.set("n", "<leader>sw", builtin.grep_string, { desc = "[S]earch current [W]ord" })
             vim.keymap.set("n", "<leader>sg", builtin.live_grep, { desc = "[S]earch by [G]rep" })
             vim.keymap.set("n", "<leader>sd", builtin.diagnostics, { desc = "[S]earch [D]iagnostics" })
@@ -498,6 +495,13 @@ require("lazy").setup({
                     -- capabilities = {},
                     settings = {
                         Lua = {
+                            workspace = {
+                                checkThirdParty = false,
+                                telemetry = { enable = false },
+                                library = {
+                                    "${3rd}/love2d/library",
+                                },
+                            },
                             completion = {
                                 callSnippet = "Replace",
                             },
@@ -570,7 +574,7 @@ require("lazy").setup({
                 --
                 -- You can use a sub-list to tell conform to run *until* a formatter
                 -- is found.
-                -- javascript = { { "prettierd", "prettier" } },
+                javascript = { { "prettierd", "prettier" } },
                 lua = { "stylua" },
                 python = {
                     -- To fix lint errors.
@@ -582,6 +586,10 @@ require("lazy").setup({
                     "fixjson",
                     "prettier",
                 },
+                html = { { "prettierd", "prettier" } },
+                css = { { "prettierd", "prettier" } },
+                yaml = { "yamlfmt" },
+                go = { "gofmt" },
             },
         },
     },
