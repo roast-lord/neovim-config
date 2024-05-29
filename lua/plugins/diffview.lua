@@ -4,7 +4,7 @@ return {
         keys = {
             { "<leader>g", "<CMD>DiffviewOpen<CR>", mode = { "n" } },
         },
-        config = {
+        opts = {
             keymaps = {
                 view = {
                     ["<leader>g"] = "<CMD>DiffviewClose<CR>",
