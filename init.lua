@@ -399,6 +399,11 @@ require("lazy").setup({
                     -- or a suggestion from your LSP for this to activate.
                     map("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction")
 
+                    vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { desc = "Go to previous [D]iagnostic message" })
+                    vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "Go to next [D]iagnostic message" })
+
+                    vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, { desc = "Show diagnostic [E]rror messages" })
+                    map("K", vim.lsp.buf.hover, "Hover Documentation")
                     -- WARN: This is not Goto Definition, this is Goto Declaration.
                     --  For example, in C this would take you to the header.
                     map("gD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
