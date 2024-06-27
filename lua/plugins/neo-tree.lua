@@ -25,6 +25,7 @@ return {
                     ".vscode",
                     ".ruff_cache",
                     ".pytest_cache",
+                    "__pycache__",
                 },
             },
             window = {
