@@ -16,9 +16,16 @@ return {
     opts = {
         filesystem = {
             filtered_items = {
-                visible = true,
                 hide_dotfiles = false,
                 hide_gitignored = false,
+                hide_by_name = {
+                    ".venv",
+                    ".git",
+                    ".mypy_cache",
+                    ".vscode",
+                    ".ruff_cache",
+                    ".pytest_cache",
+                },
             },
             window = {
                 mappings = {
