@@ -7,6 +7,7 @@ vim.api.nvim_create_autocmd("VimEnter", {
         vim.api.nvim_set_current_dir(vim.fn.expand "%:p:h")
     end,
 })
+
 -- Set <space> as the leader key
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
@@ -14,7 +15,6 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = true
-
 -- Make line numbers default
 vim.opt.number = true
 -- You can also add relative line numbers, to help with jumping.
@@ -25,7 +25,6 @@ vim.opt.smartindent = true
 vim.opt.mouse = "a"
 -- Don't show the mode, since it's already in the status line
 vim.opt.showmode = false
-
 -- Sync clipboard between OS and Neovim.
 --  Remove this option if you want your OS clipboard to remain independent.
 --  See `:help 'clipboard'`
@@ -35,7 +34,14 @@ vim.opt.clipboard = "unnamedplus"
 vim.opt.breakindent = true
 
 -- Save undo history
+
 vim.opt.undofile = true
+
+vim.opt.swapfile = false
+
+vim.opt.backup = false
+
+vim.opt.undodir = os.getenv "HOME" .. "/.vim/undodir"
 
 -- Case-insensitive searching UNLESS \C or one or more capital letters in the search term
 vim.opt.ignorecase = true
@@ -44,13 +50,13 @@ vim.opt.termguicolors = true
 -- Keep signcolumn on by default
 vim.opt.signcolumn = "yes"
 
--- Decrease update time
-vim.opt.updatetime = 250
+vim.opt.updatetime = 50
 
 -- Decrease mapped sequence wait time
 -- Displays which-key popup sooner
 vim.opt.timeoutlen = 300
 
+-- Increase update time
 -- Configure how new splits should be opened
 vim.opt.splitright = true
 vim.opt.splitbelow = false
@@ -75,6 +81,10 @@ vim.opt.scrolloff = 10
 -- Set highlight on search, but clear on pressing <Esc> in normal mode
 vim.opt.hlsearch = true
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
+
+-- To move shit up and down
+vim.keymap.set("v", "<C-Down>", ":m '>+1<CR>gv=gv")
+vim.keymap.set("v", "<C-Up>", ":m '<-2<CR>gv=gv")
 
 -- Tab/Shift+tab to indent/dedent
 vim.keymap.set("v", "<Tab>", ">gv")
@@ -122,6 +132,24 @@ vim.api.nvim_create_autocmd("TextYankPost", {
     end,
 })
 
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = "python", -- filetype for which to run the autocmd
+    callback = function()
+        local iabbrev = function(lhs, rhs)
+            vim.keymap.set("ia", lhs, rhs, { buffer = true })
+        end
+        -- automatically capitalize boolean values. Useful if you come from a
+        -- different language, and lowercase them out of habit.
+        iabbrev("true", "True")
+        iabbrev("false", "False")
+
+        -- in the same way, we can fix habits regarding comments or None
+        iabbrev("null", "None")
+        iabbrev("none", "None")
+        iabbrev("nil", "None")
+    end,
+})
+
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath "data" .. "/lazy/lazy.nvim"
@@ -145,6 +173,7 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup({
     -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
     "tpope/vim-sleuth", -- Detect tabstop and shiftwidth automatically
+    "tpope/vim-surround",
     { "nvim-treesitter/nvim-treesitter-context", opts = {} },
     -- NOTE: Plugins can also be added by using a table,
     -- with the first argument being the link and the following
@@ -466,9 +495,20 @@ require("lazy").setup({
             --  - settings (table): Override the default settings passed when initializing the server.
             --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
             local servers = {
-                -- clangd = {},
-                -- gopls = {},
-                pyright = {},
+                clangd = {},
+                gopls = {},
+                pyright = {
+                    settings = {
+                        python = {
+                            analysis = {
+                                autoSearchPaths = true,
+                                diagnosticMode = "workspace",
+                                useLibraryCodeForTypes = true,
+                            },
+                        },
+                    },
+                },
+                taplo = {},
                 ruff_lsp = {},
                 -- rust_analyzer = {},
                 -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
@@ -850,4 +890,4 @@ require("lazy").setup({
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
 --
-require("colorizer").setup()
+require("colorizer").setup {}
