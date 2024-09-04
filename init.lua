@@ -477,6 +477,20 @@ require("lazy").setup({
                     vim.api.nvim_clear_autocmds { group = "kickstart-lsp-highlight", buffer = event.buf }
                 end,
             })
+            vim.api.nvim_create_autocmd("LspAttach", {
+                group = vim.api.nvim_create_augroup("lsp_attach_disable_ruff_hover", { clear = true }),
+                callback = function(args)
+                    local client = vim.lsp.get_client_by_id(args.data.client_id)
+                    if client == nil then
+                        return
+                    end
+                    if client.name == "ruff" then
+                        -- Disable hover in favor of Pyright
+                        client.server_capabilities.hoverProvider = false
+                    end
+                end,
+                desc = "LSP: Disable hover capability from Ruff",
+            })
 
             -- LSP servers and clients are able to communicate to each other what features they support.
             --  By default, Neovim doesn't support everything that is in the LSP specification.
@@ -497,8 +511,68 @@ require("lazy").setup({
             local servers = {
                 clangd = {},
                 gopls = {},
+                pylsp = {
+                    settings = {
+                        pylsp = {
+                            single_file_support = true,
+                            plugins = {
+                                preload = {
+                                    enabled = false,
+                                },
+                                jedi_signature_help = {
+                                    enabled = false,
+                                },
+                                jedi_symbols = {
+                                    enabled = false,
+                                },
+                                jedi_hover = {
+                                    enabled = false,
+                                },
+                                jedi_references = {
+                                    enabled = false,
+                                },
+                                jedi_definition = {
+                                    enabled = false,
+                                },
+                                jedi_completion = {
+                                    enabled = false,
+                                },
+                                pylint = {
+                                    enabled = false,
+                                },
+                                pyflakes = {
+                                    enabled = false,
+                                },
+                                yapf = {
+                                    enabled = false,
+                                },
+                                autopep8 = {
+                                    enabled = false,
+                                },
+                                flake8 = {
+                                    enabled = false,
+                                },
+                                mccabe = {
+                                    enabled = false,
+                                },
+                                pycodestyle = {
+                                    enabled = false,
+                                },
+                                rope_autoimport = {
+                                    enabled = true,
+                                },
+                                ruff = {
+                                    enabled = false,
+                                },
+                            },
+                        },
+                    },
+                },
                 pyright = {
                     settings = {
+                        pyright = {
+                            disableOrganizeImports = true,
+                        },
                         python = {
                             analysis = {
                                 autoSearchPaths = true,
@@ -509,36 +583,50 @@ require("lazy").setup({
                     },
                 },
                 taplo = {},
-                ruff_lsp = {},
-                -- rust_analyzer = {},
-                -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
-                --
-                -- Some languages (like typescript) have entire language plugins that can be useful:
-                --    https://github.com/pmizio/typescript-tools.nvim
-                --
-                -- But for many setups, the LSP (`tsserver`) will work just fine
-                -- tsserver = {},
-                --
-
-                lua_ls = {
-                    -- cmd = {...},
-                    -- filetypes = { ...},
-                    -- capabilities = {},
+                ruff_lsp = {
+                    single_file_support = false,
                     settings = {
-                        Lua = {
-                            workspace = {
-                                checkThirdParty = false,
-                                telemetry = { enable = false },
-                                library = {
-                                    "${3rd}/love2d/library",
-                                },
-                            },
-                            completion = {
-                                callSnippet = "Replace",
-                            },
-                            -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
-                            -- diagnostics = { disable = { 'missing-fields' } },
+                        configurationPreference = "filesystemFirst",
+                        organize_imports = true,
+                    },
+                },
+                ruff = {
+                    init_options = {
+                        settings = {
+                            configurationPreference = "filesystemFirst",
+                            organize_imports = true,
                         },
+                    },
+                },
+            }
+            -- rust_analyzer = {},
+            -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
+            --
+            -- Some languages (like typescript) have entire language plugins that can be useful:
+            --    https://github.com/pmizio/typescript-tools.nvim
+            --
+            -- But for many setups, the LSP (`tsserver`) will work just fine
+            -- tsserver = {},
+            --
+
+            lua_ls = {
+                -- cmd = {...},
+                -- filetypes = { ...},
+                -- capabilities = {},
+                settings = {
+                    Lua = {
+                        workspace = {
+                            checkThirdParty = false,
+                            telemetry = { enable = false },
+                            library = {
+                                "${3rd}/love2d/library",
+                            },
+                        },
+                        completion = {
+                            callSnippet = "Replace",
+                        },
+                        -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
+                        -- diagnostics = { disable = { 'missing-fields' } },
                     },
                 },
             }
@@ -605,20 +693,19 @@ require("lazy").setup({
                 --
                 -- You can use a sub-list to tell conform to run *until* a formatter
                 -- is found.
-                javascript = { { "prettierd", "prettier" } },
+                javascript = { "prettier" },
                 lua = { "stylua" },
                 python = {
-                    -- To fix lint errors.
                     "ruff_fix",
-                    -- To run the Ruff formatter.
                     "ruff_format",
+                    "ruff_organize_imports",
                 },
                 json = {
                     "fixjson",
                     "prettier",
                 },
-                html = { { "prettierd", "prettier" } },
-                css = { { "prettierd", "prettier" } },
+                html = { "prettier" },
+                css = { "prettier" },
                 yaml = { "yamlfmt" },
                 go = { "gofmt" },
                 c = { "clang-format" },

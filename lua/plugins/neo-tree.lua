@@ -26,6 +26,7 @@ return {
                     ".ruff_cache",
                     ".pytest_cache",
                     "__pycache__",
+                    ".ropeproject",
                 },
             },
             window = {
