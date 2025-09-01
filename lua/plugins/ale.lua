@@ -5,7 +5,7 @@ return {
             -- Configuration goes here.
             local g = vim.g
             g.ale_linters = {
-                python = { "mypy" },
+                python = { "mypy", "golangci-lint" },
             }
         end,
     },

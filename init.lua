@@ -456,6 +456,13 @@ require("lazy").setup({
                             group = highlight_augroup,
                             callback = vim.lsp.buf.clear_references,
                         })
+                        vim.api.nvim_create_autocmd("LspDetach", {
+                            group = vim.api.nvim_create_augroup("kickstart-lsp-detach", { clear = true }),
+                            callback = function(event)
+                                vim.lsp.buf.clear_references()
+                                vim.api.nvim_clear_autocmds { group = "kickstart-lsp-highlight", buffer = event.buf }
+                            end,
+                        })
                     end
 
                     -- The following autocommand is used to enable inlay hints in your
@@ -470,13 +477,6 @@ require("lazy").setup({
                 end,
             })
 
-            vim.api.nvim_create_autocmd("LspDetach", {
-                group = vim.api.nvim_create_augroup("kickstart-lsp-detach", { clear = true }),
-                callback = function(event)
-                    vim.lsp.buf.clear_references()
-                    vim.api.nvim_clear_autocmds { group = "kickstart-lsp-highlight", buffer = event.buf }
-                end,
-            })
             vim.api.nvim_create_autocmd("LspAttach", {
                 group = vim.api.nvim_create_augroup("lsp_attach_disable_ruff_hover", { clear = true }),
                 callback = function(args)
@@ -701,7 +701,7 @@ require("lazy").setup({
                 html = { "prettier" },
                 css = { "prettier" },
                 yaml = { "yamlfmt" },
-                go = { "gofmt" },
+                go = { "gofmt", "goimports" },
                 c = { "clang-format" },
             },
         },
