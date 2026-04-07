@@ -16,10 +16,9 @@ return {
       sql = { "sqlfluff" },
       go = { "golangcilint" },
     },
-
     linters = {
       sqlfluff = {
-        args = { "lint", "--format=json" },
+        args = { "lint", "--format=json", "--dialect", "postgres" },
       },
       -- -- Example of using selene only when a selene.toml file is present
       -- selene = {

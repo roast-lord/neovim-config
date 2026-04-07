@@ -5,3 +5,4 @@
 -- Enable break indent
 vim.opt.breakindent = true
 vim.opt.wrap = true
+vim.opt.splitright = true
